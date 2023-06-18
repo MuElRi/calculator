@@ -9,13 +9,13 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QMessageBox
 
 class Ui_MainWindow():
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(300, 395)
+        MainWindow.resize(300, 420)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.lb_output = QtWidgets.QLabel(self.centralwidget)
@@ -95,10 +95,13 @@ class Ui_MainWindow():
         self.btn_clear.setGeometry(QtCore.QRect(240, 320, 61, 75))
         self.btn_clear.setStyleSheet("background-color: rgb(255, 85, 0);")
         self.btn_clear.setObjectName("btn_clear")
+        self.info = QtWidgets.QPushButton(self.centralwidget)
+        self.info.setGeometry(QtCore.QRect(0, 398, 300, 21))
+        self.info.setObjectName("info")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        #QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.add_func()
 
@@ -123,6 +126,7 @@ class Ui_MainWindow():
         self.btn_div.setText(_translate("MainWindow", ":"))
         self.btn_minus.setText(_translate("MainWindow", "-"))
         self.btn_clear.setText(_translate("MainWindow", "Clear"))
+        self.info.setText(_translate("MainWindow", "Information"))
 
     def add_func(self):
         self.btn_plus.clicked.connect(lambda: self.write_number(self.btn_plus.text()))
@@ -145,6 +149,8 @@ class Ui_MainWindow():
 
         self.btn_clear.clicked.connect(self.clear)
 
+        self.info.clicked.connect(self.information)
+
     def write_number(self, number):
         if number == ",":
             self.lb_output.setText(self.lb_output.text() + ".")
@@ -154,11 +160,36 @@ class Ui_MainWindow():
             self.lb_output.setText(self.lb_output.text() + number)
 
     def result(self):
-        res = eval(self.lb_output.text())
-        self.lb_output.setText(str(res))
+        text = self.lb_output.text()
+        if text[-1] == "+" or text[-1] == "-" or text[-1] == "*" or text[-1] == ":":
+            error = QMessageBox()
+            error.setWindowTitle("Ошибка!")
+            error.setText("Некорректное выражение")
+            error.setIcon(QMessageBox.Warning)
+            error.setInformativeText("Очистить поле?")
+            error.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
+            error.buttonClicked.connect(self.popup_action)
+            error.exec_()
+        else:
+            res = eval(self.lb_output.text())
+            self.lb_output.setText(str(res))
+
+    def popup_action(self, btn):
+        if btn.text() == "OK":
+            self.lb_output.setText("0")
 
     def clear(self):
         self.lb_output.setText("0")
+
+    def information(self):
+        info = QMessageBox()
+        info.setWindowTitle("Информация")
+        info.setText("Информация о создателе")
+        info.setIcon(QMessageBox.Information)
+        info.setInformativeText("Мухтаруллин Эльдар, Уфа")
+        info.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
+        info.setDetailedText("Доп. информация: УУНИТ, 3 курс, МО-321")
+        info.exec_()
 
 if __name__ == "__main__":
     import sys
