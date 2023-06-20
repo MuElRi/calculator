@@ -154,6 +154,8 @@ class Ui_MainWindow():
     def write_number(self, number):
         if number == ",":
             self.lb_output.setText(self.lb_output.text() + ".")
+        elif number == ":":
+            self.lb_output.setText(self.lb_output.text() + "/")
         elif self.lb_output.text() == "0":
             self.lb_output.setText(number)
         else:
@@ -161,7 +163,7 @@ class Ui_MainWindow():
 
     def result(self):
         text = self.lb_output.text()
-        if text[-1] == "+" or text[-1] == "-" or text[-1] == "*" or text[-1] == ":":
+        if text[-1] == "+" or text[-1] == "-" or text[-1] == "*" or text[-1] == "/":
             error = QMessageBox()
             error.setWindowTitle("Ошибка!")
             error.setText("Некорректное выражение")
